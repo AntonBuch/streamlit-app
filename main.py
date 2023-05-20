@@ -6,7 +6,7 @@ from scipy.stats import poisson
 
 st.title('Poisson- und Weibull-Verteilung')
 
-st.header("Weibull Verteilung")
+st.header("Poisson Verteilung")
 
 mu = st.slider('Mu', min_value=1, max_value=50, value=5, step=1)
 
