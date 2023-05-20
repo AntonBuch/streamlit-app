@@ -8,6 +8,18 @@ st.title('Poisson- und Weibull-Verteilung')
 
 st.header("Weibull Verteilung")
 
+mu = st.slider('Mu', min_value=1, max_value=50, value=5, step=1)
+
+fig_poi, ax_poi = plt.subplots(1, 1)
+# mean, var, skew, kurt = poisson.stats(mu, moments='mvsk')
+x_poi = np.arange(poisson.ppf(0.01, mu),
+              poisson.ppf(0.99, mu))
+ax_poi.bar(x_poi, poisson.pmf(x_poi, mu))
+
+st.pyplot(fig_poi)
+
+st.header("Weibull Verteilung")
+
 c = st.slider('Formparameter', min_value=0.1, max_value=5.0, value=1.0, step=0.1)
 scale= st.slider('Lageparameter', min_value=0.1, max_value=5.0, value=1.0, step=0.1)
 loc = st.slider('Schwellenparameter', min_value=0.1, max_value=5.0, value=0.0, step=0.1)
@@ -21,14 +33,3 @@ st.pyplot(fig_wei)
 
 
 
-st.header("Weibull Verteilung")
-
-mu = st.slider('Mu', min_value=1, max_value=50, value=5, step=1)
-
-fig_poi, ax_poi = plt.subplots(1, 1)
-# mean, var, skew, kurt = poisson.stats(mu, moments='mvsk')
-x_poi = np.arange(poisson.ppf(0.01, mu),
-              poisson.ppf(0.99, mu))
-ax_poi.bar(x_poi, poisson.pmf(x_poi, mu))
-
-st.pyplot(fig_poi)
