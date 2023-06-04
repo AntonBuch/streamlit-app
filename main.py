@@ -7,35 +7,70 @@ from scipy.stats import poisson
 st.title('Poisson- und Weibull-Verteilung')
 
 st.header("Poisson Verteilung")
+st.image('poisson-formel.png')
 
-mu = st.slider('Mu', min_value=1, max_value=50, value=5, step=1)
+lam = st.slider('Lambda (λ)', min_value=1, max_value=50, value=5, step=1)
 
 fig_poi, ax_poi = plt.subplots(1, 1)
 # mean, var, skew, kurt = poisson.stats(mu, moments='mvsk')
-x_poi = np.arange(poisson.ppf(0.01, mu),
-              poisson.ppf(0.99, mu))
-ax_poi.bar(x_poi, poisson.pmf(x_poi, mu))
+x_poi = np.arange(poisson.ppf(0.01, lam),
+              poisson.ppf(0.99, lam))
+ax_poi.bar(x_poi, poisson.pmf(x_poi, lam))
 
 st.pyplot(fig_poi)
 
+
+
 st.header("Weibull Verteilung")
 
-c = st.slider('Formparameter', min_value=0.1, max_value=5.0, value=1.0, step=0.1)
-scale= st.slider('Lageparameter', min_value=0.1, max_value=5.0, value=1.0, step=0.1)
-loc = st.slider('Schwellenparameter', min_value=0.1, max_value=5.0, value=0.0, step=0.1)
+st.image('weibull-formel.png')
+
+b = st.slider('Formparameter (b)', min_value=0.1, max_value=5.0, value=1.0, step=0.1)
+T= st.slider('Lageparameter (T)', min_value=0.1, max_value=5.0, value=1.0, step=0.1)
+t0 = st.slider('Schwellenparameter (t0)', min_value=0.1, max_value=3.0, value=0.0, step=0.1)
 line = st.checkbox('Gerade bei 63,2%')
 
 fig_wei, ax_wei = plt.subplots(1, 1)
-x_wei = np.linspace(0,5, 100)
-ax_wei.plot(x_wei, weibull_min.pdf(x_wei, c, loc= loc, scale= scale), label="Dichtefunktion")
-ax_wei.plot(x_wei, weibull_min.cdf(x_wei, c, loc= loc, scale= scale), label="Verteilungsfunktion")
+x_wei = np.linspace(0, 5, 200)
+ax_wei.plot(x_wei, weibull_min.pdf(x_wei, b, loc= t0, scale= T), label="Dichtefunktion")
+ax_wei.plot(x_wei, weibull_min.cdf(x_wei, b, loc= t0, scale= T), label="Verteilungsfunktion")
 if line:
-    ax_wei.plot([0,scale+loc],[0.632,0.632], linestyle='dotted', color='black')
-    ax_wei.vlines([scale+loc],0,weibull_min.cdf(scale+loc, c, loc= loc, scale= scale), linestyles='dotted', colors='black')
+    ax_wei.plot([0,T+t0],[0.632,0.632], linestyle='dotted', color='black')
+    ax_wei.vlines([T+t0],0,weibull_min.cdf(T+t0, b, loc= t0, scale= T), linestyles='dotted', colors='black')
 
 ax_wei.legend(loc='best', frameon=False)
 
 st.pyplot(fig_wei)
 
 
+st.subheader('Praxisbeispiel Windgeschwindigkeiten')
 
+windspeeds = [31, 25, 12, 20, 16, 17, 11, 14, 24, 21, 12, 22, 31, 21, 28, 34, 27, 22, 18, 19, 21, 19, 24, 29, 29, 21, 20, 21, 19, 16, 26, 25, 18, 31, 24, 14, 20, 32, 23, 23, 27, 25, 26, 29, 17, 18, 24, 23, 12, 21, 20, 23, 23, 22, 19, 30, 23, 23, 23, 20, 25, 28, 20, 22, 24, 18, 20, 29, 17, 21, 27, 37, 29, 13, 16, 20, 22, 21, 23, 17, 22, 37, 18, 24, 17, 36, 26, 26, 26, 15, 27, 17, 30, 15, 22, 33, 26, 27, 21, 30, 27, 28, 30, 25, 28, 17, 19, 57, 37, 22, 31, 25, 30, 29, 38, 17, 26, 15, 16, 19, 19, 25, 20, 29, 26, 20, 28, 24, 22, 28, 28, 18, 17, 20, 23, 27, 29, 31, 30, 39, 23, 30, 26, 31, 28, 17, 27, 26, 24, 27, 26, 27, 25, 20, 23, 24, 29, 31, 22, 15, 17, 20, 20, 22, 17, 21, 22, 25, 26, 27, 22, 20, 21, 47, 22, 22, 23, 24, 22, 26, 22, 19, 21, 22, 26, 35, 24, 24, 32, 27, 27, 27, 22, 18, 29, 23, 30, 20, 19, 21, 23, 24, 22, 20, 17, 16, 23, 22, 19, 27, 11, 18, 20, 14, 14, 12, 18, 25, 22, 15, 23, 22, 19, 18, 18, 19, 20, 22, 20, 25, 22, 18, 19, 23, 17, 20, 16, 19, 24, 24, 24, 25, 29, 27, 23, 21, 18, 15, 23, 17, 26, 23, 24, 26, 25, 32, 26, 37, 21, 20, 13, 15, 20, 25, 19, 24, 24, 10, 13, 28, 20, 33, 14, 15, 15, 16, 12, 16, 20, 15, 14, 15, 12, 14, 18, 27, 22, 14, 23, 20, 21, 23, 22, 24, 20, 24, 36, 20, 16, 23, 17, 12, 15, 13, 16, 14, 11, 9, 12, 19, 23, 12, 14, 10, 25, 14, 25, 23, 28, 20, 17, 11, 25, 13, 31, 32, 27, 28, 11, 15, 28, 26, 15, 22, 16, 20, 28, 27, 28, 16, 17, 16, 24, 31, 28, 30, 16, 10, 16, 20, 20, 14, 14, 11, 11, 16, 17, 21, 26, 19, 20, 22, 17, 19, 13, 20, 18, 31, 25, 30, 21, 24, 21, 15, 21, 21, 13, 18, 24, 26, 12, 13, 32, 23, 21, 13, 13, 20, 21, 15, 19, 12, 20, 15, 19, 19, 17, 32, 23, 21, 20, 17, 24, 22, 25, 23, 21, 28, 22, 11, 13, 26, 16, 21, 26, 13, 18, 26, 27, 15, 14, 19, 28, 22, 18, 28, 31, 25, 30, 24, 15, 21, 24, 21, 17, 16, 15, 13, 36, 33, 13, 13, 16, 13, 14, 20, 18, 18, 23, 16, 17, 16, 20, 17, 22, 17, 15, 14, 22, 27, 29, 19, 24, 28, 18, 20, 25, 26, 27, 32, 16, 24, 26, 29, 27, 26, 12, 19, 19, 20, 20, 27, 18, 43, 25, 25, 22, 23, 16, 23, 20, 32, 37, 26, 19, 14, 15, 20, 23, 26, 28, 23, 26, 19, 31, 29, 20, 17, 26, 24, 20, 30, 35, 20, 28, 21, 24, 17, 32, 17, 29, 20, 18, 25, 33, 16, 16, 12, 16, 20, 16, 17, 14, 17, 13, 13, 16, 25, 20, 29, 22, 24, 25, 15, 21, 22, 26, 29, 17, 20, 16, 17, 18, 22, 17, 18, 26, 31, 29, 19, 22, 26, 28, 28, 29, 24, 21, 19, 19, 19, 18, 19, 19, 21, 23, 22, 19, 19, 23, 24, 20, 19, 17, 20, 25, 18, 16, 21, 17, 16, 17, 22, 21, 22, 22, 24, 20, 20, 19, 17, 16, 19, 17, 23, 20, 22, 23, 22, 18, 15, 23, 13, 18, 18, 15, 17, 24, 21, 19, 19, 23, 24, 19, 20, 16, 17, 25, 20, 20, 20, 17, 26, 19, 18, 18, 14, 15, 16, 17, 15, 16, 19, 21, 22, 17, 17, 16, 17, 18, 14, 14, 13, 12, 15, 20, 11, 16, 21, 23, 20, 15, 21, 16, 16, 14, 18, 20, 24, 25, 32, 26, 31, 23, 14, 31, 18, 42, 27, 12, 14, 14, 20, 19, 20, 28, 20, 9, 20, 25, 27, 14, 11, 17, 28, 30, 15, 11, 17, 35, 13, 14, 16, 22, 20, 22, 19, 15, 11, 12, 14, 12, 13, 14, 16, 12, 21, 13, 19, 23, 29, 37, 18, 16, 26, 25, 24, 20, 25, 15, 20, 24, 16, 17, 31, 33, 35, 11, 14, 20, 24, 13, 14, 13, 12, 13, 13, 18, 30, 16, 9, 16, 17, 19, 17, 29, 18, 12, 26, 17, 36, 26, 12, 24, 20, 30, 21, 17, 24, 25, 19, 28, 23, 23, 12, 22, 29, 21, 29, 23, 16, 20, 19, 24, 26, 25, 19, 21, 29, 28, 21, 16, 18, 37, 28, 19, 16, 21, 23, 22, 28, 25, 28, 22, 18, 26, 33, 30, 27, 26, 15, 16, 25, 26, 20, 17, 12, 25, 29, 23, 20, 31, 27, 28, 19, 20, 24, 18, 22, 24, 18, 37, 20, 17, 18, 25, 23, 19, 19, 26, 32, 26, 26, 20, 17, 22, 28, 25, 23, 13, 35, 25, 16, 17, 20, 25, 27, 37, 25, 23, 23, 22, 25, 19, 19, 15, 19, 29, 27, 30, 29, 26, 29, 13, 16, 15, 17, 31, 23, 29, 13, 16, 22, 22, 22, 22, 28, 21, 19, 21, 19, 22, 16, 18, 16, 20, 22, 20, 14, 18, 34, 14, 19, 22, 18, 21, 23, 22, 19, 16, 17, 17, 16, 22, 22, 20, 16, 19, 15, 39, 13, 17, 17, 23, 25, 24, 26, 28, 26, 23, 23, 25, 31, 28, 25, 24, 22, 20, 20, 23, 24, 22, 20, 17, 21, 21, 33, 17, 26, 30, 17, 18, 21, 22, 19, 18, 20, 18, 18, 19, 20, 20, 20, 21, 24, 19, 24, 12, 16, 16, 18, 19, 17, 14, 20, 21, 21, 17, 20, 19, 22, 25, 16, 14, 15, 17, 17, 19, 19, 25, 20, 20, 20, 31, 10, 15, 15, 18, 17, 12, 12, 16, 17, 13, 18, 20, 23, 21, 20, 13, 11, 21, 12, 13, 11, 14, 20, 21, 23, 26, 16, 14, 11, 13, 17, 16, 24, 21, 20, 23, 22, 18, 29, 15, 16, 19, 16, 17, 14, 14, 16, 21, 14, 17, 22, 17, 25, 11, 12, 20, 12, 16, 17, 12, 12, 13, 12, 16, 14, 18, 26, 29, 22, 15, 21, 23, 24, 12, 14, 9, 26, 28, 12, 20, 16, 17, 21, 19, 17, 27, 19, 32, 18, 15, 25, 17, 22, 17, 20, 21, 35, 35, 21, 11, 19, 19, 10, 28, 32, 20, 11, 20, 30, 16, 18, 25, 23, 17, 28, 28, 21, 22, 27, 35, 29, 26, 24, 13, 29, 16, 22, 14, 18, 11, 38, 43, 16, 25, 24, 14, 19, 22, 22, 18, 21, 20, 20, 21, 12, 19, 22, 22, 26, 19, 22, 21, 21, 28, 32, 24, 15, 22, 20, 37, 34, 26, 15, 25, 23, 22, 18, 21, 24, 29, 23, 23, 18, 19, 29, 25, 17, 23, 18, 15, 31, 18, 18, 21, 24, 24, 16, 21, 21, 23, 23, 38, 28, 17, 27, 20, 35, 27, 26, 27, 26, 29, 17, 22, 34, 15, 20, 26, 26, 22, 18, 15, 23, 20, 25, 21, 26, 16, 22, 20, 23, 23, 22, 22, 26, 30, 26, 26, 30, 33, 23, 25, 31, 34, 20, 17, 23, 23, 18, 23, 25, 25, 16, 20, 24, 32, 24, 33, 28, 23, 25, 16, 33, 19, 29, 24, 23, 34, 11, 14, 26, 16, 16, 20, 24, 41, 25, 17, 14, 20, 21, 21, 22, 27, 23, 20, 29, 28, 23, 19, 17, 22, 17, 22, 23, 19, 22, 30, 18, 23, 27, 24, 25, 26, 28, 19, 20, 27, 17, 19, 20, 22, 20, 19, 22, 35, 24, 23, 20, 29, 22, 24, 22, 24, 19, 24, 27, 21, 20, 17, 20, 20]
+fit = st.button('Fit Weibull-Verteilung', b)
+
+if fit:
+    b_wind, t0_wind, T_wind = weibull_min.fit(data= windspeeds) # Vorhersage der Parameter für Weibull-Verteilung
+    st.session_state.b_wind = b_wind
+    st.session_state.T_wind = T_wind
+    st.session_state.t0_wind = t0_wind
+
+b_wind = st.slider('Formparameter (b)', key='b_wind', min_value=0.1, max_value=5.0, value=1.0, step=0.1)
+T_wind= st.slider('Lageparameter (T)', key='T_wind', min_value=0.1, max_value=20.0, value=1.0, step=0.1)
+t0_wind = st.slider('Schwellenparameter (t0)', key='t0_wind',min_value=0.1, max_value=15.0, value=0.0, step=0.1)
+
+
+
+fig_wind, ax_wind = plt.subplots(1, 1)
+
+
+ax_wind.hist(windspeeds, bins=range(np.max(windspeeds)), density=True, label='Histogramm') # Histogramm der Windböhen
+x_wind = np.linspace(0, np.max(windspeeds), 1000)
+
+ax_wind.plot(x_wind, weibull_min.pdf(x_wind, b_wind, t0_wind, T_wind), label='Weibull-Verteilung') # Weibull-Verteilung
+ax_wind.legend(loc='best', frameon=False)
+ax_wind.set_xlabel('Windgeschwindigkeit in Meilen')
+ax_wind.set_ylabel('Anteil')
+
+st.pyplot(fig_wind)
+
+st.markdown('[Datenquelle](https://www.kaggle.com/datasets/grubenm/austin-weather)')
